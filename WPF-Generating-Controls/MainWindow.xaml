@@ -10,7 +10,7 @@
   <Grid>
     <ComboBox Name="CBXNames" HorizontalAlignment="Left" Margin="32,32,0,0" VerticalAlignment="Top" Width="180"/>
     <Border BorderBrush="Black" BorderThickness="2" Width="180" Height="24" Padding="2" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="240,30,0,0">
-      <StackPanel Name="CHBXClasses">
+      <StackPanel Name="CHBXClasses" Orientation="Horizontal">
 
       </StackPanel>
     </Border>

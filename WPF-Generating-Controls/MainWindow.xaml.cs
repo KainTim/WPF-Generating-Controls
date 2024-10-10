@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using System.Windows.Controls;
 
 namespace WPF_Generating_Controls;
 public partial class MainWindow : Window
@@ -9,6 +10,29 @@ public partial class MainWindow : Window
   {
     InitCBX();
     InitCHBX();
+    InitBTN();
+  }
+
+  private void InitBTN()
+  {
+    BtnClasses.Children.Clear();
+    List<string> classes = new List<string>();
+    foreach (var student in Configuration.Students)
+    {
+      if (!classes.Contains(student.Clazz))
+      {
+        classes.Add(student.Clazz);
+      }
+    }
+    foreach (var clazz in classes)
+    {
+      BtnClasses.Children.Add(new Button()
+      {
+        Content = clazz,
+        Margin = new Thickness(10, 10, 10, 10)
+      }
+      );
+    };
   }
 
   private void InitCHBX()
@@ -21,6 +45,15 @@ public partial class MainWindow : Window
       {
         classes.Add(student.Clazz);
       }
+    }
+    foreach (var clazz in classes)
+    {
+      CHBXClasses.Children.Add(new CheckBox()
+      {
+        Content = clazz,
+        Margin = new Thickness(10, 0, 0, 0)
+      }
+      );
     }
   }
 
