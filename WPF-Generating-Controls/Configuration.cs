@@ -23,7 +23,7 @@ internal class Configuration
   private static void InitSubjects()
   {
     string[] lines = File.ReadAllLines("145a_subjects.csv");
-    foreach (string line in lines)
+    foreach (string line in lines[0].Split(";"))
     {
       Subjects.Add(line);
     }
