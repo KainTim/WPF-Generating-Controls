@@ -24,14 +24,16 @@ public partial class MainWindow : Window
         classes.Add(student.Clazz);
       }
     }
+    classes.Sort();
     foreach (var clazz in classes)
     {
-      BtnClasses.Children.Add(new Button()
+      Button btn = new Button()
       {
         Content = clazz,
         Margin = new Thickness(10, 10, 10, 10)
-      }
-      );
+      };
+      btn.Click += BTN_OnClick;
+      BtnClasses.Children.Add(btn);
     };
   }
 
@@ -46,14 +48,18 @@ public partial class MainWindow : Window
         classes.Add(student.Clazz);
       }
     }
+    classes.Sort();
     foreach (var clazz in classes)
     {
-      CHBXClasses.Children.Add(new CheckBox()
+      var chbx = new CheckBox()
       {
         Content = clazz,
-        Margin = new Thickness(10, 0, 0, 0)
-      }
-      );
+        Margin = new Thickness(10, 0, 0, 0),
+        IsChecked = true,
+      };
+      chbx.Checked += CHBXClazz_OnCheckChanged;
+      chbx.Unchecked += CHBXClazz_OnCheckChanged;
+      CHBXClasses.Children.Add(chbx);
     }
   }
 
@@ -67,5 +73,13 @@ public partial class MainWindow : Window
     CBXNames.SelectedIndex = 0;
     LBLSelected.Content = $"{CBXNames.SelectedItem} selected";
     CBXNames.SelectionChanged += (s, e) => LBLSelected.Content = $"{CBXNames.SelectedItem} selected";
+  }
+  private void CHBXClazz_OnCheckChanged(object sender, RoutedEventArgs routedEventArgs)
+  {
+    LBLSelected.Content = $"{((CheckBox)sender).Content} {(((CheckBox)sender).IsChecked ?? false ? "Checked" : "Unchecked")}";
+  }
+  private void BTN_OnClick(object sender, RoutedEventArgs routedEventArgs)
+  {
+    LBLSelected.Content = $"{((Button)sender).Content} clicked";
   }
 }
