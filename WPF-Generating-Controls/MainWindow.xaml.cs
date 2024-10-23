@@ -11,7 +11,6 @@ public partial class MainWindow : Window
   {
     InitCBX();
     InitCHBX();
-    InitBTN();
     InitRBSubjects();
     InitRBLevels();
   }
@@ -35,7 +34,6 @@ public partial class MainWindow : Window
       RBLevels.Children.Add(rb);
     }
   }
-
   private void InitRBSubjects()
   {
     foreach (var subject in Configuration.Subjects)
@@ -46,38 +44,10 @@ public partial class MainWindow : Window
         Margin = new Thickness(0, 10, 0, 0)
       };
 
-      rb.Checked += RBClazz_OnClick;
+      rb.Checked += RB_Subject_OnClick;
       RBSubjects.Children.Add(rb);
     }
   }
-
-
-  private void InitBTN()
-  {
-    BtnClasses.Children.Clear();
-    List<string> classes = new List<string>();
-    foreach (var student in Configuration.Students)
-    {
-      if (!classes.Contains(student.Clazz))
-      {
-        classes.Add(student.Clazz);
-      }
-    }
-    classes.Sort();
-    foreach (var clazz in classes)
-    {
-      Button btn = new Button()
-      {
-        Content = clazz,
-        Margin = new Thickness(5, 5, 5, 0),
-        Padding = new Thickness(2),
-        Background = new LinearGradientBrush(Colors.Yellow, Colors.Green, 0)
-      };
-      btn.Click += BTN_OnClick;
-      BtnClasses.Children.Add(btn);
-    };
-  }
-
   private void InitCHBX()
   {
     CHBXClasses.Children.Clear();
@@ -95,7 +65,7 @@ public partial class MainWindow : Window
       var chbx = new CheckBox()
       {
         Content = clazz,
-        Margin = new Thickness(5, 0, 5, 0),
+        Margin = new Thickness(5),
         IsChecked = true,
       };
       chbx.Checked += CHBXClazz_OnCheckChanged;
@@ -103,7 +73,6 @@ public partial class MainWindow : Window
       CHBXClasses.Children.Add(chbx);
     }
   }
-
   private void InitCBX()
   {
     CBXNames.Items.Clear();
@@ -112,24 +81,54 @@ public partial class MainWindow : Window
       CBXNames.Items.Add(item);
     }
     CBXNames.SelectedIndex = 0;
-    LBLSelected.Content = $"{CBXNames.SelectedItem} selected";
-    CBXNames.SelectionChanged += (s, e) => LBLSelected.Content = $"{CBXNames.SelectedItem} selected";
   }
-  private void RBClazz_OnClick(object sender, RoutedEventArgs e)
-  {
-    LBLSelected.Content = $"{((RadioButton)sender).Content} selected";
-  }
+
+
   private void CHBXClazz_OnCheckChanged(object sender, RoutedEventArgs routedEventArgs)
   {
-    LBLSelected.Content = $"{((CheckBox)sender).Content} {(((CheckBox)sender).IsChecked ?? false ? "Checked" : "Unchecked")}";
+    bool isChecked = ((CheckBox)sender).IsChecked ?? true;
+    string classname = (string)((CheckBox)sender).Content;
+    if (isChecked)
+    {
+      int prevCount= CBXNames.Items.Count;
+      foreach (Student configStudent in Configuration.Students)
+      {
+        if (configStudent.Clazz == classname & !CBXNames.Items.Contains(configStudent))
+        {
+          CBXNames.Items.Add(configStudent);
+        }
+      }
+      if(prevCount == 0) CBXNames.SelectedIndex = 0;
+    }
+    if (!isChecked)
+    {
+      foreach (Student student in Configuration.Students)
+      {
+        if (student.Clazz == classname)
+        {
+          CBXNames.Items.Remove(student);
+        }
+      }
+    }
   }
   private void RB_Levels_OnClick(object sender, RoutedEventArgs e)
   {
-    LBLSelected.Content = $"Level {((RadioButton)sender).Content} selected";
-  }
 
-  private void BTN_OnClick(object sender, RoutedEventArgs routedEventArgs)
+  }
+    private void RB_Subject_OnClick(object sender, RoutedEventArgs e)
   {
-    LBLSelected.Content = $"{((Button)sender).Content} clicked";
+
+  }
+  private void SaveItem_Click(object sender, RoutedEventArgs e)
+  {
+
+  }
+  private void LoadItem_Click(object sender, RoutedEventArgs e)
+  {
+
+  }
+  private void AddBtn_Click(object sender, RoutedEventArgs e)
+  {
+
   }
 }
