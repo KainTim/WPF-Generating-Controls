@@ -42,11 +42,13 @@
         <StackPanel x:Name="RBSubjects"/>
       </GroupBox>
       <DockPanel Grid.Column ="1" Grid.RowSpan="2">
-        <Label Name="LblCountServices" DockPanel.Dock="Top" Margin="5">x Nachhilfen </Label>
+        <Label Name="LblCountServices" DockPanel.Dock="Top" Margin="5">x Nachhilfen</Label>
         <Button Name="BtnAddSelectedService" DockPanel.Dock="Bottom" Height="25" Width="100" Margin="5" Click="AddBtn_Click" >Add</Button>
         <ListBox Name="LsBxServices"></ListBox>
       </DockPanel>
-      <Viewbox Grid.Column="2" Grid.RowSpan="2" Name="VbStudentImage"></Viewbox>
+      <Viewbox Grid.Column="2" Grid.RowSpan="2" >
+        <Image Name="ImgStudent"></Image>
+      </Viewbox>
     </Grid>
   </DockPanel>
 

@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace WPF_Generating_Controls;
 public partial class MainWindow : Window
@@ -13,6 +14,14 @@ public partial class MainWindow : Window
     InitCHBX();
     InitRBSubjects();
     InitRBLevels();
+    var image = new BitmapImage();
+    image.BeginInit();
+    image.UriSource = new Uri(((Student)CBXNames.SelectedItem).ImagePath, UriKind.Relative);
+    image.CacheOption = BitmapCacheOption.OnLoad;
+    image.EndInit();
+    ImgStudent.Source = image;
+    LsBxServices.ItemsSource = ((Student)CBXNames.SelectedItem).Services;
+    LsBxServices.Items.Refresh();
   }
 
   private void InitRBLevels()
@@ -29,10 +38,9 @@ public partial class MainWindow : Window
         FontSize = 16,
         Foreground = new SolidColorBrush(Colors.Red),
       };
-
-      rb.Checked += RB_Levels_OnClick;
       RBLevels.Children.Add(rb);
     }
+    ((RadioButton)RBLevels.Children[0]).IsChecked = true;
   }
   private void InitRBSubjects()
   {
@@ -43,10 +51,9 @@ public partial class MainWindow : Window
         Content = subject,
         Margin = new Thickness(0, 10, 0, 0)
       };
-
-      rb.Checked += RB_Subject_OnClick;
       RBSubjects.Children.Add(rb);
     }
+    ((RadioButton)RBSubjects.Children[0]).IsChecked = true;
   }
   private void InitCHBX()
   {
@@ -81,6 +88,9 @@ public partial class MainWindow : Window
       CBXNames.Items.Add(item);
     }
     CBXNames.SelectedIndex = 0;
+    CBXNames.SelectionChanged += CBXSelection_Changed;
+    LsBxServices.ItemsSource = ((Student)CBXNames.SelectedItem).Services;
+    LsBxServices.Items.Refresh();
   }
 
 
@@ -90,7 +100,7 @@ public partial class MainWindow : Window
     string classname = (string)((CheckBox)sender).Content;
     if (isChecked)
     {
-      int prevCount= CBXNames.Items.Count;
+      int prevCount = CBXNames.Items.Count;
       foreach (Student configStudent in Configuration.Students)
       {
         if (configStudent.Clazz == classname & !CBXNames.Items.Contains(configStudent))
@@ -98,7 +108,7 @@ public partial class MainWindow : Window
           CBXNames.Items.Add(configStudent);
         }
       }
-      if(prevCount == 0) CBXNames.SelectedIndex = 0;
+      if (prevCount == 0) CBXNames.SelectedIndex = 0;
     }
     if (!isChecked)
     {
@@ -111,24 +121,68 @@ public partial class MainWindow : Window
       }
     }
   }
-  private void RB_Levels_OnClick(object sender, RoutedEventArgs e)
-  {
-
-  }
-    private void RB_Subject_OnClick(object sender, RoutedEventArgs e)
-  {
-
-  }
   private void SaveItem_Click(object sender, RoutedEventArgs e)
   {
-
+    Configuration.SaveServices();
   }
   private void LoadItem_Click(object sender, RoutedEventArgs e)
   {
-
+    Configuration.LoadServices();
+    LsBxServices.Items.Refresh();
   }
   private void AddBtn_Click(object sender, RoutedEventArgs e)
   {
+    Student student = (Student)CBXNames.SelectedItem;
+    student.Services.Add(new Service()
+    {
+      Subject = getSelectedRBSubjectsItem(),
+      Level = getSelectedRBLevelItem(),
+    });
+    LsBxServices.Items.Refresh();
+  }
+  private void CBXSelection_Changed(object sender, RoutedEventArgs e)
+  {
+    var comboBox = (ComboBox)sender;
 
+    if (comboBox.SelectedItem == null)
+    {
+      ImgStudent.Source = null;
+      LsBxServices.ItemsSource = null;
+      return;
+    }
+    var image = new BitmapImage();
+    image.BeginInit();
+    image.UriSource = new Uri(((Student)comboBox.SelectedItem).ImagePath, UriKind.Relative);
+    image.CacheOption = BitmapCacheOption.OnLoad;
+    image.EndInit();
+    ImgStudent.Source = image;
+    LsBxServices.ItemsSource = ((Student)comboBox.SelectedItem).Services;
+    LsBxServices.Items.Refresh();
+  }
+  private int getSelectedRBLevelItem()
+  {
+    int selectedLevel = -1;
+    foreach (var level in RBLevels.Children)
+    {
+      if (level is RadioButton)
+      {
+        RadioButton radioButtonLevel = (RadioButton)level;
+        selectedLevel = radioButtonLevel.IsChecked ?? false ? (int)radioButtonLevel.Content : selectedLevel;
+      }
+    }
+    return selectedLevel;
+  }
+  private string getSelectedRBSubjectsItem()
+  {
+    string selectedSubject = "";
+    foreach (var subject in RBSubjects.Children)
+    {
+      if (subject is RadioButton)
+      {
+        RadioButton radioButtonLevel = (RadioButton)subject;
+        selectedSubject = radioButtonLevel.IsChecked ?? false ? (string)radioButtonLevel.Content : selectedSubject;
+      }
+    }
+    return selectedSubject;
   }
 }
